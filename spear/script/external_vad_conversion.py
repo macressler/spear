@@ -19,7 +19,7 @@
 
 import bob
 import time, imp
-import xbob.spkrec.preprocessing
+import spear.preprocessing
 import sys
 from .. import utils
 import os
@@ -36,7 +36,7 @@ def main():
   
   # Define the processor and the parameters
   m_preprocessor_config =  imp.load_source('preprocessor', "config/preprocessing/external.py")
-  preprocessor = xbob.spkrec.preprocessing.External(m_preprocessor_config)
+  preprocessor = spear.preprocessing.External(m_preprocessor_config)
   
   infile=open(input_file_list)
   for filename in infile:

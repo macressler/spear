@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-import xbob.spkrec
+import spear
 
-preprocessor = xbob.spkrec.preprocessing.External
+preprocessor = spear.preprocessing.External
 
 win_length_ms = 20
 win_shift_ms = 10

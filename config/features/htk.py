@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-import xbob.spkrec
+import spear
 import numpy
 
-feature_extractor = xbob.spkrec.feature_extraction.HTKFeatures
+feature_extractor = spear.feature_extraction.HTKFeatures
 
 # Cepstral coefficients Mask
 features_mask = numpy.arange(0,60) 

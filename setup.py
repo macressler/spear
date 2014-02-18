@@ -21,10 +21,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='xbob.spkrec',
-    version='1.0.2a',
+    name='spear',
+    version='1.1.0',
     description='Speaker recognition toolkit',
-    url='https://pypi.python.org/pypi/xbob.spkrec',
+    url='https://pypi.python.org/pypi/bob.spear',
     license='GPLv3',
     keywords = "Speaker Recognition, Speaker verification, Gaussian Mixture Model, ISV, UBM-GMM, I-Vector, Audio processing, NIST SRE 2012, Database",
     author='Elie Khoury',
@@ -42,16 +42,16 @@ setup(
     
     entry_points={
       'console_scripts': [
-        'spkverif_isv.py = xbob.spkrec.script.spkverif_isv:main',
-        'spkverif_gmm.py = xbob.spkrec.script.spkverif_isv:main',
-        'spkverif_jfa.py = xbob.spkrec.script.spkverif_jfa:main',
-        'spkverif_ivector.py = xbob.spkrec.script.spkverif_ivector:main',
-        'para_ubm_spkverif_isv.py = xbob.spkrec.script.para_ubm_spkverif_isv:main',
-        'para_ubm_spkverif_gmm.py = xbob.spkrec.script.para_ubm_spkverif_isv:main',
-        'para_ubm_spkverif_ivector.py = xbob.spkrec.script.para_ubm_spkverif_ivector:main',
-        'fusion.py = xbob.spkrec.script.fusion:main',
+        'spkverif_isv.py = spear.script.spkverif_isv:main',
+        'spkverif_gmm.py = spear.script.spkverif_isv:main',
+        'spkverif_jfa.py = spear.script.spkverif_jfa:main',
+        'spkverif_ivector.py = spear.script.spkverif_ivector:main',
+        'para_ubm_spkverif_isv.py = spear.script.para_ubm_spkverif_isv:main',
+        'para_ubm_spkverif_gmm.py = spear.script.para_ubm_spkverif_isv:main',
+        'para_ubm_spkverif_ivector.py = spear.script.para_ubm_spkverif_ivector:main',
+        'fusion.py = spear.script.fusion:main',
         'evaluate.py = facereclib.script.evaluate:main',
-#        'manual_vad_conversion.py = xbob.spkrec.script.manual_vad_conversion:main',
+#        'manual_vad_conversion.py = spear.script.manual_vad_conversion:main',
         ],
       },
 

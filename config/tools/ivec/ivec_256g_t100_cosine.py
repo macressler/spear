@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-import xbob.spkrec
+import spear
 import bob
-tool = xbob.spkrec.tools.IVecTool
+tool = spear.tools.IVecTool
 
 # 2/ GMM Training
 n_gaussians = 256

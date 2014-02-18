@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-import xbob.spkrec
+import spear
 
-preprocessor = xbob.spkrec.preprocessing.Energy
+preprocessor = spear.preprocessing.Energy
 
 # Cepstral parameters
 win_length_ms = 20

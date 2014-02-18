@@ -1,11 +1,11 @@
-Speaker Recognition Toolkit
-===========================
+BOB SPEAR: A Speaker Recognition Toolkit based on Bob
+=====================================================
 
-This is the speaker recognition toolkit, designed to run speaker verification/recognition
+SPEAR is a speaker recognition toolkit based on Bob, designed to run speaker verification/recognition
 experiments . It's originally based on facereclib tool:
 https://pypi.python.org/pypi/facereclib
 
-`xbob.spkrec`_ is designed in a way that it should be easily possible to execute experiments combining different mixtures of:
+`SPEAR`_ is designed in a way that it should be easily possible to execute experiments combining different mixtures of:
 
 * Speaker Recognition databases and their according protocols
 * Voice activity detection
@@ -14,24 +14,21 @@ https://pypi.python.org/pypi/facereclib
 
 In any case, results of these experiments will directly be comparable when the same dataset is employed.
 
-`xbob.spkrec`_ is adapted to run speaker verification/recognition experiments with the SGE grid infrastructure at Idiap.
+`SPEAR`_ is adapted to run speaker verification/recognition experiments with the SGE grid infrastructure at Idiap.
 
 
 If you use this package and/or its results, please cite the following
 publications:
 
-1. The original paper presented at the NIST SRE 2012 workshop::
+1. The Bob spear paper published at ICASSP 2014::
 
-     @inproceedings{Khoury_NISTSRE_2012,
-       author = {Khoury, Elie and El Shafey, Laurent and Marcel, S{\'{e}}bastien},
-       month = {dec},
-       title = {The Idiap Speaker Recognition Evaluation System at NIST SRE 2012},
-       booktitle = {NIST Speaker Recognition Conference},
-       year = {2012},
-       location = {Orlando, USA},
-       organization = {NIST},
-       pdf = {http://publications.idiap.ch/downloads/papers/2012/Khoury_NISTSRE_2012.pdf}
+    @inproceedings{spear,
+      author = {Khoury, E. and El Shafey, L. and Marcel, S.},
+      title = {An open source toolbox for speaker recognition based on {B}ob},
+      booktitle = {IEEE Intl. Conf. on Acoustics, Speech and Signal Processing (ICASSP)},
+      year = {2014},
     }
+
 
 
 2. Bob as the core framework used to run the experiments::
@@ -52,11 +49,11 @@ I- Installation
 
 Just download this package and decompress it locally::
 
-  $ wget http://pypi.python.org/packages/source/x/xbob.spkrec/xbob.spkrec-0.0.1a8.zip
-  $ unzip xbob.spkrec-0.0.1a8.zip
-  $ cd xbob.spkrec
+  $ wget http://pypi.python.org/packages/source/x/bob.spear/bob.spear-1.1.0.zip
+  $ unzip bob.spear-1.1.0.zip
+  $ cd spear
 
-`xbob.spkrec`_ is based on the `BuildOut`_ python linking system. You only need to use buildout to bootstrap and have a working environment ready for
+`spear`_ is based on the `BuildOut`_ python linking system. You only need to use buildout to bootstrap and have a working environment ready for
 experiments::
 
   $ python bootstrap
@@ -100,7 +97,7 @@ If you want to run the experiments in the GRID at Idiap or any equivalent SGE, y
 * ``--grid``: The configuration file for the grid setup.
 
 If no grid configuration file is specified, the experiment is run sequentially on the local machine.
-For several datasets, feature types, recognition algorithms, and grid requirements the `xbob.spkrec`_ provides these configuration files.
+For several datasets, feature types, recognition algorithms, and grid requirements the `SPEAR`_ provides these configuration files.
 They are located in the *config/...* directories.
 It is also safe to design one experiment and re-use one configuration file for all options as long as the configuration file includes all desired information:
 
@@ -117,7 +114,7 @@ By default, the ZT score normalization is activated. To deactivate it, please ad
 III- Experiment design
 -----------------------
 
-To be very flexible, the tool chain in the `xbob.spkrec`_ is designed in several stages::
+To be very flexible, the tool chain in the `SPEAR`_ is designed in several stages::
 
   1. Signal Preprocessing (Voice Activity Detection)
   2  Feature Extraction
@@ -149,7 +146,7 @@ This step aims to extract features. Depending on the configuration file, several
 3. Feature Projection
 ~~~~~~~~~~~~~~~~~~~~~
 Some provided tools need to process the features before they can be used for verification.
-In the `xbob.spkrec`_, this step is referenced as the **projection** step.
+In the `SPEAR`_, this step is referenced as the **projection** step.
 Again, the projection might require training, which is executed using the extracted features from the training set.
 Afterward, all features are projected (using the previously trained Projector).
 
@@ -183,7 +180,7 @@ This will compute the EER, the minCLLR, CLLR, and draw the DET curve.
 IV- Command line options
 ------------------------
 
-Additionally to some of the required command line options discussed above, there are several options to modify the behavior of the `xbob.spkrec`_ experiments.
+Additionally to some of the required command line options discussed above, there are several options to modify the behavior of the `SPEAR`_ experiments.
 One set of command line options change the directory structure of the output:
 
 * ``--temp-directory``: Base directory where to write temporary files into (the default is */idiap/temp/$USER/<DATABASE>* when using the grid or */scratch/$USER/<DATABASE>* when executing jobs locally)
@@ -229,7 +226,7 @@ There are some more command line options that can be specified:
 V- Datasets
 ------------
 
-For the moment, there are 4 databases that are tested in `xbob.spkrec`_. Their protocols are also shipped with the tool. You can use the script ``bob_compute_perf.py`` to compute EER and HTER on DEV and EVAL as follows::
+For the moment, there are 4 databases that are tested in `SPEAR`_. Their protocols are also shipped with the tool. You can use the script ``bob_compute_perf.py`` to compute EER and HTER on DEV and EVAL as follows::
 
 
   $ bin/bob_compute_perf.py -d scores-dev -t scores-eval 
@@ -352,7 +349,7 @@ Here is the performance of this system:
 ~~~~~~~~~~~~~~~~
 We first invite you to read the paper describing our system submitted to the NIST SRE 2012 Evaluation. The protocols on the development set are the results of a joint work by the I4U group. To reproduce the results, please check this dedicated package::
 
-  https://pypi.python.org/pypi/xbob.spkrec.nist_sre12
+  https://pypi.python.org/pypi/spear.nist_sre12
 
 
 .. _Bob: http://www.idiap.ch/software/bob
@@ -362,7 +359,7 @@ We first invite you to read the paper describing our system submitted to the NIS
 .. _NIST: http://www.nist.gov/itl/iad/ig/focs.cfm
 .. _xbob.db.verification.filelist: https://pypi.python.org/pypi/xbob.db.verification.filelist
 .. _xbob.sox: https://pypi.python.org/pypi/xbob.sox
-.. _xbob.spkrec: https://pypi.python.org/pypi/xbob.spkrec
+.. _spear: https://pypi.python.org/pypi/bob.spear
 .. _pypi: https://pypi.python.org/pypi
 .. _Voxforge: http://www.voxforge.org/
 .. _BANCA: http://www.ee.surrey.ac.uk/CVSSP/banca/
