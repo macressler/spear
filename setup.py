@@ -37,7 +37,7 @@ setup(
     zip_safe=False,
     
     namespace_packages = [
-      'xbob',
+      'spear',
     ],
     
     entry_points={
