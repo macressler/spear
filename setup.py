@@ -21,7 +21,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='spear',
+    name='bob.spear',
     version='1.1.0',
     description='Speaker recognition toolkit',
     url='https://pypi.python.org/pypi/bob.spear',
