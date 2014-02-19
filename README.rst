@@ -29,8 +29,6 @@ publications:
       year = {2014},
     }
 
-
-
 2. Bob as the core framework used to run the experiments::
 
     @inproceedings{Anjos_ACMMM_2012,
