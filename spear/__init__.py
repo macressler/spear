@@ -16,5 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#see http://peak.telecommunity.com/DevCenter/setuptools#namespace-packages
-__import__('pkg_resources').declare_namespace(__name__)
+"""Tool chain for computing verification scores"""
+import toolchain
+import preprocessing
+import feature_extraction
+import tools
+import utils
+import script
+
