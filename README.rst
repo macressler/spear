@@ -27,6 +27,7 @@ publications:
       title = {Spear: An open source toolbox for speaker recognition based on {B}ob},
       booktitle = {IEEE Intl. Conf. on Acoustics, Speech and Signal Processing (ICASSP)},
       year = {2014},
+      url = {http://publications.idiap.ch/downloads/papers/2014/Khoury_ICASSP_2014.pdf},
     }
 
 2. Bob as the core framework used to run the experiments::
