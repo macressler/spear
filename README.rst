@@ -20,11 +20,11 @@ In any case, results of these experiments will directly be comparable when the s
 If you use this package and/or its results, please cite the following
 publications:
 
-1. The Bob spear paper published at ICASSP 2014::
+1. The Spear paper published at ICASSP 2014::
 
     @inproceedings{spear,
       author = {Khoury, E. and El Shafey, L. and Marcel, S.},
-      title = {An open source toolbox for speaker recognition based on {B}ob},
+      title = {Spear: An open source toolbox for speaker recognition based on {B}ob},
       booktitle = {IEEE Intl. Conf. on Acoustics, Speech and Signal Processing (ICASSP)},
       year = {2014},
     }
