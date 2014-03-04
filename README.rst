@@ -65,20 +65,20 @@ II- Running experiments
 
 The above two commands will automatically download all desired packages (`gridtk`_, `xbob.sox`_ and `xbob.db.verification.filelist`_ ) from `pypi`_ and generate some scripts in the bin directory, including the following scripts::
   
-   $ bin/spkverif_isv.py
-   $ bin/spkverif_ivector.py
    $ bin/spkverif_gmm.py
+   $ bin/spkverif_isv.py
    $ bin/spkverif_jfa.py
+   $ bin/spkverif_ivector.py
    $ bin/para_ubm_spkverif_isv.py
    $ bin/para_ubm_spkverif_ivector.py
    $ bin/para_ubm_spkverif_gmm.py
-   $ bin/fusion.py
+   $ bin/fusion_llr.py
    $ bin/evaluate.py
+   $ bin/det.py
    
-
-  
-These scripts can be used to employ different 
-To use them you have to specify at least four command line parameters (see also the ``--help`` option):
+The first four toolchains are the basic toolchains for GMM, ISV, JFA and I-Vector. The next three toolchains are the parallel implementation of GMM, ISV, and I-Vector.
+ 
+To use the 7 first (main) toolchains you have to specify at least four command line parameters (see also the ``--help`` option):
 
 * ``--database``: The configuration file for the database
 * ``--preprocessing``: The configuration file for Voice Activity Detection
@@ -103,7 +103,7 @@ It is also safe to design one experiment and re-use one configuration file for a
 * The preprocessing: ``preprocessor = spkrec.preprocessing.<PREPROCESSOR>``;
 * The feature extraction: ``extractor = spkrec.feature_extraction.<EXTRACTOR>``;
 * The tool: ``tool = spkrec.tools.<TOOL>``; plus configurations of the tool itself
-* Grid parameters: They help to fix which queues are used for each of the steps, how much files per job, etc. 
+* Grid parameters: They help to configure which queues are used for each of the steps, how much files per job, etc. 
 
 
 By default, the ZT score normalization is activated. To deactivate it, please add the ``-z`` to the command line.
@@ -112,18 +112,17 @@ By default, the ZT score normalization is activated. To deactivate it, please ad
 III- Experiment design
 -----------------------
 
-To be very flexible, the tool chain in the `SPEAR`_ is designed in several stages::
+To be very flexible, the tool chains in the `SPEAR`_ are designed in several stages including::
 
-  1. Signal Preprocessing (Voice Activity Detection)
+  1. Preprocessing (Voice Activity Detection)
   2  Feature Extraction
-  3. Feature Projection
-  4. Model Enrollment
-  5. Scoring
-  6. Fusion
-  7. Evaluation
+  3. UBM Training and Projection (computation of sufficient statistics)
+  4. Subspace Training and Projection (for ISV, JFA and I-Vector modeling)
+  5. Conditioning and Compensation (for I-Vector modeling)
+  6. Client Model Enrollment
+  7. Scoring and score normalization
 
 Note that not all tools implement all of the stages.
-
 
 1. Voice Activity Detection 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -139,41 +138,49 @@ This step aims to extract features. Depending on the configuration file, several
 * LFCC/MFCC feature extraction
 * Spectrogram extraction
 * Feature normalization
+* `HTK`_ Feature reader
+* `SPro`_ Feature reader
 
+3. Universal Background Model Training and Projection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This step aims at computing the universal background model referenced as `Projector`. The training includes both k-means and ML steps. In the parallel implementation, the E (Estimation) step is split to run on parallel processes. 
+Then, the computation of sufficient statistics in `SPEAR`_ is referenced as the **projection-ubm** step.
+It aims at projecting the cepstral features using the previously trained Projector.
 
-3. Feature Projection
-~~~~~~~~~~~~~~~~~~~~~
-Some provided tools need to process the features before they can be used for verification.
-In the `SPEAR`_, this step is referenced as the **projection** step.
-Again, the projection might require training, which is executed using the extracted features from the training set.
-Afterward, all features are projected (using the previously trained Projector).
+4. Subspace Training and Projection 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This steps aims at estimating the subspaces needed by ISV, JFA and I-Vector. The I-Vector can also be parallelized similarly to the UBM. The projection here is referenced by either `projection-isv`, `projection-jfa`, or `projection-ivector`. Notice that the I-Vector projection process is the extraction of the i-vectors. 
 
-
-4. Model Enrollment
+5. Conditioning and Compensation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This steps is used by the I-Vector toolchain. It includes Whitening, Length Normalization, LDA and WCCN projection.
+ 
+6. Model Enrollment
 ~~~~~~~~~~~~~~~~~~~
-Model enrollment defines the stage, where several (projected or unprojected) features of one identity are used to enroll the model for that identity.
+Model enrollment defines the stage, where several (projected or compensated) features of one identity are used to enroll the model for that identity.
 In the easiest case, the features are simply averaged, and the average feature is used as a model.
-More complex procedures, which again might require a model enrollment training stage, create models in a different way.
 
-
-5. Scoring
+7. Scoring
 ~~~~~~~~~~
 In the final scoring stage, the models are compared to probe features and a similarity score is computed for each pair of model and probe.
 Some of the models (the so-called T-Norm-Model) and some of the probe features (so-called Z-Norm-probe-features) are split up, so they can be used to normalize the scores later on.
 
-6. Fusion
+In addition, there are independent scripts for fusion and evaluation.
+
+8. Fusion
 ~~~~~~~~~
-The score fusion of different score outputs uses `logistic regression`_.
+The fusion of scores from different systems is done using `logistic regression`_ that should be trained normally on the development scores. 
 
-
-7. Evaluation
+9. Evaluation
 ~~~~~~~~~~~~~
 One way to compute the final result is to use the *bin/evaluate.py* e.g., by calling::
 
   $ bin/evaluate.py -d PATH/TO/USER/DIRECTORY/scores-dev -e PATH/TO/USER/DIRECTORY/scores-eval -c EER -D DET.pdf -x 
   
-This will compute the EER, the minCLLR, CLLR, and draw the DET curve.
+This will compute the EER, the minCLLR, CLLR, and draw the DET curve. To better compare different systems using DET curves, a separate script can be used like in this example::
 
+  $ ./bin/det.py -s gmm-scores isv-scores ivector-scores -n GMM ISV i-vectors
+  
 
 IV- Command line options
 ------------------------
@@ -186,32 +193,23 @@ One set of command line options change the directory structure of the output:
 * ``--sub-directory``: sub-directory into *<TEMP_DIR>* and *<USER_DIR>* where the files generated by the experiment will be put
 * ``--score-sub-directory``: name of the sub-directory in *<USER_DIR>/<PROTOCOL>* where the scores are put into
 
-If you want to re-use parts previous experiments, you can specify the directories (which are relative to the *<TEMP_DIR>*, but you can also specify absolute paths):
+If you want to re-use parts previous experiments, you can specify the directories (which are relative to the *<TEMP_DIR>*, but you can also specify absolute paths), like, e.g.:
 
-* ``--preprocessed-image-directory``
 * ``--features-directory``
-* ``--projected-directory``
-* ``--models-directories`` (one for each the Models and the T-Norm-Models)
-
-or even trained Extractor, Projector, or Enroler (i.e., the results of the extraction, projection, or enrollment training):
-
-* ``--extractor-file``
-* ``--projector-file``
-* ``--enroler-file``
 
 For that purpose, it is also useful to skip parts of the tool chain.
-To do that you can use:
+To do that you can use, for e.g.:
 
 * ``--skip-preprocessing``
-* ``--skip-feature-extraction-training``
 * ``--skip-feature-extraction``
 * ``--skip-projection-training``
-* ``--skip-projection``
+* ``--skip-projection-ubm``
 * ``--skip-enroler-training``
 * ``--skip-model-enrolment``
 * ``--skip-score-computation``
 * ``--skip-concatenation``
 
+Check the complete list using the `help` option.
 although by default files that already exist are not re-created.
 To enforce the re-creation of the files, you can use the ``--force`` option, which of course can be combined with the ``--skip...``-options (in which case the skip is preferred).
 
@@ -224,12 +222,7 @@ There are some more command line options that can be specified:
 V- Datasets
 ------------
 
-For the moment, there are 4 databases that are tested in `SPEAR`_. Their protocols are also shipped with the tool. You can use the script ``bob_compute_perf.py`` to compute EER and HTER on DEV and EVAL as follows::
-
-
-  $ bin/bob_compute_perf.py -d scores-dev -t scores-eval 
-
-By default, this script will also generate the DET curve in a PDF file. 
+For the moment, there are 4 databases that are tested in `SPEAR`_. Their protocols are also shipped with the tool.
 
 In this README, we give examples of different toolchains applied on different databases: Voxforge, BANCA, TIMIT, MOBIO, and NIST SRE 2012.
 
@@ -333,7 +326,7 @@ Here is the performance of the system on the Development set:
 ~~~~~~~~~~~~~~~~
 This is a more challenging database. The noise and the short duration of the segments make the task of speaker recognition relatively difficult. The following experiment on male group uses the 4Hz modulation energy based VAD, and the ISV (with dimU=50) modelling technique::
 
-  $ ./bin/spkverif_isv.py -d config/database/mobio_male_twothirds_wav.py -p config/preprocessing/mod_4hz.py \ 
+  $ ./bin/spkverif_isv.py -d config/database/mobio/mobile0-male.py -p config/preprocessing/mod_4hz.py \ 
    -f config/features/mfcc_60.py -t config/tools/isv/isv_u50.py \ 
    --user-directory PATH/TO/USER/DIR --temp-directory PATH/TO/TEMP/DIR -z
   
@@ -341,6 +334,8 @@ Here is the performance of this system:
   
 * ``DEV: EER = 10.40%``
 * ``EVAL: EER = 10.36%``
+
+To generate the results presented in the ICASSP 2014 paper, please check the script included in the `icassp` folder of the toolbox.
 
 
 5. NIST SRE 2012
@@ -363,3 +358,5 @@ We first invite you to read the paper describing our system submitted to the NIS
 .. _BANCA: http://www.ee.surrey.ac.uk/CVSSP/banca/
 .. _TIMIT: http://www.ldc.upenn.edu/Catalog/catalogEntry.jsp?catalogId=LDC93S1
 .. _logistic regression: http://en.wikipedia.org/wiki/Logistic_regression
+.. _Spro: https://gforge.inria.fr/projects/spro
+.. _HTK: http://htk.eng.cam.ac.uk/
