@@ -290,8 +290,7 @@ The scoring computation can also be done using **PLDA**::
 * ``EVAL: HTER = 16.93%``
 
 
-Note that in the previous examples, our goal is not to optimize the parameters on the DEV set but to provide examples of use.
-  
+Note that in the previous examples, our goal is not to optimize the parameters on the DEV set but to provide examples of use. 
 
 2. BANCA dataset
 ~~~~~~~~~~~~~~~~
@@ -322,9 +321,9 @@ Here is the performance of the system on the Development set:
 * ``DEV: EER = 2.68%``
 
 
-4. MOBIO dataset
+4. MOBIO dataset 
 ~~~~~~~~~~~~~~~~
-This is a more challenging database. The noise and the short duration of the segments make the task of speaker recognition relatively difficult. The following experiment on male group uses the 4Hz modulation energy based VAD, and the ISV (with dimU=50) modelling technique::
+This is a more challenging database. The noise and the short duration of the segments make the task of speaker recognition relatively difficult. The following experiment on male group (Mobile-0) uses the 4Hz modulation energy based VAD, and the ISV (with dimU=50) modelling technique::
 
   $ ./bin/spkverif_isv.py -d config/database/mobio/mobile0-male.py -p config/preprocessing/mod_4hz.py \ 
    -f config/features/mfcc_60.py -t config/tools/isv/isv_u50.py \ 
@@ -336,7 +335,7 @@ Here is the performance of this system:
 * ``EVAL: EER = 10.36%``
 
 To generate the results presented in the ICASSP 2014 paper, please check the script included in the `icassp` folder of the toolbox.
-
+Note that the MOBIO dataset has different protocols, and that are all implemented in `xbob.db.mobio`_. But in this toolbox, we provide separately mobile-0 protocol (into filelist format) for simplicity.
 
 5. NIST SRE 2012
 ~~~~~~~~~~~~~~~~
@@ -360,3 +359,4 @@ We first invite you to read the paper describing our system submitted to the NIS
 .. _logistic regression: http://en.wikipedia.org/wiki/Logistic_regression
 .. _Spro: https://gforge.inria.fr/projects/spro
 .. _HTK: http://htk.eng.cam.ac.uk/
+.. _xbob.db.mobio: https://pypi.python.org/pypi/xbob.db.mobio

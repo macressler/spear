@@ -1,4 +1,4 @@
 include README.rst bootstrap.py buildout.cfg COPYING
 recursive-include protocols *.txt *.lst
 recursive-include config *.py
-recursive-include icassp *.sh
+recursive-include icassp_2014 *.sh
