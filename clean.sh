@@ -8,5 +8,3 @@ fdel () {
 
 fdel . "*~"
 fdel . "*.pyc"
-fdel logs "*.e*"
-fdel logs "*.o*"
