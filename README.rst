@@ -48,8 +48,8 @@ I- Installation
 
 Just download this package and decompress it locally::
 
-  $ wget http://pypi.python.org/packages/source/x/bob.spear/bob.spear-1.1.0.zip
-  $ unzip bob.spear-1.1.0.zip
+  $ wget https://pypi.python.org/packages/source/b/bob.spear/bob.spear-1.1.2.zip
+  $ unzip bob.spear-1.1.2.zip
   $ cd spear
 
 `spear`_ is based on the `BuildOut`_ python linking system. You only need to use buildout to bootstrap and have a working environment ready for
