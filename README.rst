@@ -84,7 +84,7 @@ To use the 7 first (main) toolchains you have to specify at least four command l
 * ``--database``: The configuration file for the database
 * ``--preprocessing``: The configuration file for Voice Activity Detection
 * ``--feature-extraction``: The configuration file for feature extraction
-* ``--tool-chain``: The configuration file for the face verification tool chain
+* ``--tool-chain``: The configuration file for the speaker verification tool chain
 
 If you are not at Idiap, please precise the TEMP and USER directories:
 
