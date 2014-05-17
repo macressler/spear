@@ -202,25 +202,25 @@ class IVecTool (UBMGMMTool):
 
   #######################################################
   ################## IVector model enrol ####################
-  def load_enroler(self, enroler_file):
+  def load_projector(self, projector_file):
     """Reads the UBM model from file"""
-    # now, load the JFA base, if it is included in the file
-
-    self.m_ivector = bob.machine.IVectorMachine(self.m_ubm, self.m_config.rt)
-    self.m_ivector.load(bob.io.HDF5File(enroler_file))
-    #self.m_ivector = bob.machine.IVectorMachine(bob.io.HDF5File(enroler_file))
-
-    # add UBM model from base class
-    self.m_ivector.ubm = self.m_ubm
-
+    self.m_ubm = bob.machine.GMMMachine(bob.io.HDF5File(projector_file))
+    
+  #######################################################
+  ################## IVector model enrol ####################
+  def load_enroler(self, enroler_file, projector_file):
+    """Reads the Enroler model from file"""
+    # now, load the IVector machine
+    self.m_ivector = bob.machine.IVectorMachine(bob.io.HDF5File(enroler_file))
+    # add TV model from base class
+    self.m_ivector.ubm = bob.machine.GMMMachine(bob.io.HDF5File(projector_file))
 
   #######################################################
   ############## Whitening model enrol ##################
   
   def load_whitening_enroler(self, whitening_enroler_file):
     """Reads the whitening Enroler model from file"""
-    # now, load the JFA base, if it is included in the file
-    
+    # now, load the Whitening Enroler
     self.whitening_machine = bob.machine.LinearMachine(self.m_config.rt,self.m_config.rt)
     self.whitening_machine.load(bob.io.HDF5File(whitening_enroler_file))
    
@@ -260,8 +260,7 @@ class IVecTool (UBMGMMTool):
     return model.forward(probe)
     
   def project_ivector(self, feature_array, projected_ubm):
-    m_ivector = bob.machine.IVectorMachine(self.m_ivector)
-    projected_ivector = m_ivector.forward(projected_ubm)
+    projected_ivector = self.m_ivector.forward(projected_ubm)
     return projected_ivector
   
   def save_feature(self, data, feature_file):

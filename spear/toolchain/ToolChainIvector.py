@@ -36,10 +36,8 @@ class ToolChainIvector(ToolChain):
     tool_type = self.select_tool_type(tool)
     # load the projector file
     if hasattr(tool, 'project_ivector'):
-      if hasattr(tool, 'load_projector'):
-        tool.load_projector(self.m_file_selector.projector_file())
       if hasattr(tool, 'load_enroler'):
-        tool.load_enroler(self.m_file_selector.enroler_file())
+        tool.load_enroler(self.m_file_selector.enroler_file(), self.m_file_selector.projector_file())
       feature_files = self.m_file_selector.feature_list(tool_type)
       projected_ubm_files = self.m_file_selector.projected_ubm_list(tool_type)
       projected_ivector_files = self.m_file_selector.projected_ivector_list(tool_type)
