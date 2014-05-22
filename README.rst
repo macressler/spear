@@ -95,7 +95,6 @@ If you want to run the experiments in the GRID at Idiap or any equivalent SGE, y
 
 * ``--grid``: The configuration file for the grid setup.
 
-If no grid configuration file is specified, the experiment is run sequentially on the local machine.
 For several datasets, feature types, recognition algorithms, and grid requirements the `SPEAR`_ provides these configuration files.
 They are located in the *config/...* directories.
 It is also safe to design one experiment and re-use one configuration file for all options as long as the configuration file includes all desired information:
@@ -106,6 +105,15 @@ It is also safe to design one experiment and re-use one configuration file for a
 * The tool: ``tool = spkrec.tools.<TOOL>``; plus configurations of the tool itself
 * Grid parameters: They help to configure which queues are used for each of the steps, how much files per job, etc. 
 
+If no grid configuration file is specified, the experiment is run sequentially on the local machine with a single core. 
+
+If you want to run on a local machine with multiple cores, you have to precise the grid type in your configuration file:
+
+* ``grid_type='local'``
+
+Then run your script with the new configuration file and excute the following command line after precising the number of parallel jobs to be used (e.g. 8)::
+
+   $ bin/jman --local -vv run-scheduler --parallel 8
 
 By default, the ZT score normalization is activated. To deactivate it, please add the ``-z`` to the command line.
 
