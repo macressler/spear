@@ -46,7 +46,16 @@ publications:
 I- Installation
 ----------------
 
-Just download this package and decompress it locally::
+First, be sure that bob, bob-devel, sox and libsox-dev are installed.
+On ubuntu, you need something like::
+
+  $ sudo apt-get install bob bob-dev sox libsox-dev
+  
+On Mac OSX, you need something like::
+
+  $ sudo port install bob bob-dev sox libsox-dev
+   
+Then, just download this package and decompress it locally::
 
   $ wget https://pypi.python.org/packages/source/b/bob.spear/bob.spear-1.1.2.zip
   $ unzip bob.spear-1.1.2.zip
