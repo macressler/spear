@@ -46,7 +46,7 @@ publications:
 I- Installation
 ----------------
 
-First, be sure that bob, bob-devel, sox and libsox-dev are installed.
+First, be sure that ``bob``, ``bob-devel``, ``sox`` and ``libsox-dev`` are installed.
 On ubuntu, you need something like::
 
   $ sudo apt-get install bob bob-dev sox libsox-dev
