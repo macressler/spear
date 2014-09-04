@@ -270,7 +270,31 @@ The performance of the system on DEV and EVAL are:
 
 * ``DEV: EER = 2.00%``
 * ``EVAL: HTER = 1.65%``
- 
+
+If you want to run the same experiment on SGE::
+
+  $ ./bin/spkverif_gmm.py -d config/database/voxforge.py -p config/preprocessing/energy.py \
+   -f config/features/mfcc_60.py -t config/tools/ubm_gmm/ubm_gmm_256G.py -b ubm_gmm -z \ 
+   --user-directory PATH/TO/USER/DIR --temp-directory PATH/TO/TEMP/DIR -g config/grid/grid.py
+
+
+If you want to run the parallel implementation of the UBM on the SGE::
+
+  $ ./bin/para_ubm_spkverif_gmm.py -d config/database/voxforge.py -p config/preprocessing/energy.py \
+    -f config/features/mfcc_60.py -t config/tools/ubm_gmm/ubm_gmm_256G.py -b ubm_gmm -z \
+    --user-directory PATH/TO/USER/DIR --temp-directory PATH/TO/TEMP/DIR -g config/grid/para_training_sge.py
+
+
+If you want to run the parallel implementation of the UBM on your local machine::
+
+  $ ./bin/para_ubm_spkverif_gmm.py -d config/database/voxforge.py -p config/preprocessing/energy.py \
+    -f config/features/mfcc_60.py -t config/tools/ubm_gmm/ubm_gmm_256G.py -b ubm_gmm -z \
+    --user-directory PATH/TO/USER/DIR --temp-directory PATH/TO/TEMP/DIR -g config/grid/para_training_local.py
+
+$ bin/jman --local -vv run-scheduler --parallel 6
+
+In this example, the number of nodes is 6.
+
 Another example is to use **ISV** toolchain instead of UBM-GMM::
 
   $ ./bin/spkverif_isv.py -d config/database/voxforge.py -p config/preprocessing/energy.py \ 
