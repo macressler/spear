@@ -386,8 +386,8 @@ We first invite you to read the paper describing our system submitted to the NIS
   https://pypi.python.org/pypi/spear.nist_sre12
 
 .. note::
-For any additional information, please use our mailing list::
-https://groups.google.com/forum/#!forum/bob-devel
+  For any additional information, please use our mailing list::
+  https://groups.google.com/forum/#!forum/bob-devel
   
 
 .. _Bob: http://www.idiap.ch/software/bob
