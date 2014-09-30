@@ -205,7 +205,9 @@ class IVecTool (UBMGMMTool):
   def load_projector(self, projector_file):
     """Reads the UBM model from file"""
     self.m_ubm = bob.machine.GMMMachine(bob.io.HDF5File(projector_file))
-    
+    # Initializes GMMStats object
+    self.m_gmm_stats = bob.machine.GMMStats(self.m_ubm.dim_c, self.m_ubm.dim_d)
+
   #######################################################
   ################## IVector model enrol ####################
   def load_enroler(self, enroler_file, projector_file):
