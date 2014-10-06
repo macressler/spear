@@ -21,8 +21,8 @@
 
 import numpy
 import bob
+import math
 from .. import utils
-
 import logging
 logger = logging.getLogger("bob.c++")
 
@@ -41,6 +41,10 @@ class Energy:
     alpha = self.m_config.alpha
     n_samples = len(energy_array)
 
+    # add an epsilon small Gaussian noise to avoid numerical issues (mainly due to artificial silence).
+    energy_array = numpy.array(math.pow(10,-6) * numpy.random.randn(len(energy_array))) + energy_array 
+    
+    #normalize it
     normalized_energy = utils.normalize_std_array(energy_array)
     
     kmeans = bob.machine.KMeansMachine(2, 1)
@@ -59,9 +63,9 @@ class Energy:
     # Trains using the KMeansTrainer
     kmeans_trainer.train(kmeans, normalized_energy)
     
-    
     [variances, weights] = kmeans.get_variances_and_weights_for_each_cluster(normalized_energy)
     means = kmeans.means
+
     if numpy.isnan(means[0]) or numpy.isnan(means[1]):
       print("Warning: skip this file")
       return numpy.array(numpy.zeros(n_samples), dtype=numpy.int16)
@@ -94,6 +98,7 @@ class Energy:
     
     higher_mean_gauss = m_ubm.update_gaussian(higher)
     lower_mean_gauss = m_ubm.update_gaussian(lower)
+    
 
     k=0
     for i in range(n_samples):
