@@ -603,6 +603,9 @@ class ToolChainIvector(ToolChain):
   # Cosine Scoring/
   def cosine_scores(self, client_ivectors, probe_files):
     """Compute simple scores for the given model"""
+    
+    # do it probe by probe independently
+    """
     scores = numpy.ndarray((1,len(probe_files)), 'float64')
 
     # Loops over the probes
@@ -615,3 +618,23 @@ class ToolChainIvector(ToolChain):
       i += 1
     # Returns the scores
     return scores
+    """
+    
+    # much faster way
+    probes = []
+    # read all probe files into memory
+    for k in probe_files:
+      probes.append(self.__read_probe__(str(k)))
+    probe_ivectors = numpy.vstack(probes)
+
+    # Norm the data
+    clients_norm = numpy.sum(numpy.abs(client_ivectors)**2,axis=1)**(1./2)
+    probes_norm = numpy.sum(numpy.abs(probe_ivectors)**2,axis=1)**(1./2)
+    client_ivectors = client_ivectors / clients_norm[:, numpy.newaxis]
+    probe_ivectors = probe_ivectors / probes_norm[:, numpy.newaxis]
+    
+    scores_all = numpy.dot(client_ivectors, probe_ivectors.T)
+
+    scores = numpy.max(scores_all,axis=0)
+    
+    return scores[numpy.newaxis, :]
