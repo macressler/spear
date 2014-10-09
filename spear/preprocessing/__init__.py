@@ -23,4 +23,5 @@ from .. import utils
 
 from MOD_4HZ import MOD_4HZ
 from Energy import Energy
+from Energy_THR import Energy_THR
 from External import External
