@@ -53,7 +53,11 @@ On ubuntu, you need something like::
   
 On Mac OSX, you need something like::
 
-  $ sudo port install bob bob-dev sox libsox-dev
+  $ sudo port install bob sox
+  
+More details about installing Bob and avoiding caveats can be found here:
+
+https://github.com/idiap/bob/wiki/Packages 
    
 Then, just download this package and decompress it locally::
 
