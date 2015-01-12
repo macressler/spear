@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import spear
-import bob
 
 tool = spear.tools.UBMGMMRegularTool
 

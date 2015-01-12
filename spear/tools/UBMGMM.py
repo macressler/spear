@@ -20,7 +20,7 @@
 
 import bob
 import numpy
-import logging
+#import logging
 import facereclib.tools.UBMGMM as UBMGMM
 
 #logger = logging.getLogger("bob.c++")

@@ -88,11 +88,21 @@ def probes_used_extract_scores(full_scores, same_probes):
 
 def read(filename):
   """Read audio file"""
-  import xbob.sox
-  audio = xbob.sox.reader(filename)
-  (rate, data) = audio.load()
+  
+  #TODO: update xbob.sox first. This will enable the use of formats like NIST sphere and other 
+  #import xbob.sox
+  #audio = xbob.sox.reader(filename)
+  #(rate, data) = audio.load()
   # We consider there is only 1 channel in the audio file => data[0]
-  data= numpy.cast['float'](data[0]*pow(2,15)) # pow(2,15) is used to get the same native format as for scipy.io.wavfile.read
+  #data= numpy.cast['float'](data[0]*pow(2,15)) # pow(2,15) is used to get the same native format as for scipy.io.wavfile.read
+  
+  import scipy.io.wavfile
+  rate, audio = scipy.io.wavfile.read(filename)
+  
+  # We consider there is only 1 channel in the audio file => data[0]
+  data= numpy.cast['float'](audio)
+  
+  
   return [rate,data]
 
 

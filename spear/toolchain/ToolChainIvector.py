@@ -55,10 +55,10 @@ class ToolChainIvector(ToolChain):
         
         if not self.__check_file__(projected_ivector_file, force):
           # load feature
-          #feature = bob.io.load(str(feature_file))
+          #feature = bob.io.base.load(str(feature_file))
           feature = self.__read_feature__(feature_file, extractor)
           # load projected_ubm file
-          projected_ubm = bob.machine.GMMStats(bob.io.HDF5File(str(projected_ubm_file)))
+          projected_ubm = bob.learn.misc.GMMStats(bob.io.base.HDF5File(str(projected_ubm_file)))
           # project ivector feature
           projected_ivector = tool.project_ivector(feature, projected_ubm)
           # write it
@@ -298,7 +298,7 @@ class ToolChainIvector(ToolChain):
                 print("Warning: something is wrong with this file: %s" %str(k))
             model = tool.plda_enrol(enrol_features)
             # save the model
-            model.save(bob.io.HDF5File(str(model_file), "w"))
+            model.save(bob.io.base.HDF5File(str(model_file), "w"))
 
     # T-Norm-Models
     if 'T' in types and compute_zt_norm:
@@ -401,7 +401,7 @@ class ToolChainIvector(ToolChain):
             a = self.__scores__(model, probe_files)
         #if compute_zt_norm:
           # write A matrix only when you want to compute zt norm afterwards
-        bob.io.save(a, self.m_file_selector.a_file(model_id, group))
+        bob.io.base.save(a, self.m_file_selector.a_file(model_id, group))
   
         # Saves to text file
         self.__save_scores__(self.m_file_selector.no_norm_file(model_id, group), a, probe_objects, self.m_file_selector.client_id(model_id))
@@ -438,7 +438,7 @@ class ToolChainIvector(ToolChain):
             b = self.cosine_scores(model, zprobe_objects)
           else:
             b = self.__scores__(model, zprobe_objects)
-        bob.io.save(b, score_file)
+        bob.io.base.save(b, score_file)
   
   # Function 10/
   def __scores_c__(self, tmodel_ids, group, dir_type, force, preload_probes, scoring_type='plda'):
@@ -472,7 +472,7 @@ class ToolChainIvector(ToolChain):
             c = self.cosine_scores(tmodel, probe_files)
           else:
             c = self.__scores__(tmodel, probe_files)
-        bob.io.save(c, score_file)
+        bob.io.base.save(c, score_file)
       
   # Function 11/
   def __scores_d__(self, tmodel_ids, group, dir_type, force, preload_probes, scoring_type='plda'):
@@ -509,10 +509,10 @@ class ToolChainIvector(ToolChain):
             d = self.cosine_scores(tmodel, zprobe_files)
           else:
             d = self.__scores__(tmodel, zprobe_files)
-        bob.io.save(d, self.m_file_selector.d_file(tmodel_id, group))
+        bob.io.base.save(d, self.m_file_selector.d_file(tmodel_id, group))
         tclient_id = [self.m_file_selector.m_config.db.get_client_id_from_model_id(tmodel_id)]
-        d_same_value_tm = bob.machine.ztnorm_same_value(tclient_id, zprobe_ids)
-        bob.io.save(d_same_value_tm, score_file)
+        d_same_value_tm = bob.learn.misc.ztnorm_same_value(tclient_id, zprobe_ids)
+        bob.io.base.save(d_same_value_tm, score_file)
 
   # Function 12/
   def compute_scores(self, tool, compute_zt_norm, dir_type, force = False, indices = None, groups = ['dev', 'eval'], types = ['A', 'B', 'C', 'D'], preload_probes = False, scoring_type = 'plda'):
@@ -584,18 +584,18 @@ class ToolChainIvector(ToolChain):
       # and normalize it
       self.__scores_d_normalize__(tmodel_ids, group)
       # load D matrices only once
-      d = bob.io.load(self.m_file_selector.d_matrix_file(group))
-      d_same_value = bob.io.load(self.m_file_selector.d_same_value_matrix_file(group)).astype(bool)
+      d = bob.io.base.load(self.m_file_selector.d_matrix_file(group))
+      d_same_value = bob.io.base.load(self.m_file_selector.d_same_value_matrix_file(group)).astype(bool)
       # Loops over the model ids
       for model_id in model_ids:
         # Loads probe objects to get information about the type of access
         probe_objects = self.m_file_selector.probe_objects_for_model(model_id, group)
         # Loads A, B, C, D and D_same_value matrices
-        a = bob.io.load(self.m_file_selector.a_file(model_id, group))
-        b = bob.io.load(self.m_file_selector.b_file(model_id, group))
-        c = bob.io.load(self.m_file_selector.c_file_for_model(model_id, group))
+        a = bob.io.base.load(self.m_file_selector.a_file(model_id, group))
+        b = bob.io.base.load(self.m_file_selector.b_file(model_id, group))
+        c = bob.io.base.load(self.m_file_selector.c_file_for_model(model_id, group))
         # compute zt scores
-        zt_scores = bob.machine.ztnorm(a, b, c, d, d_same_value)
+        zt_scores = bob.learn.misc.ztnorm(a, b, c, d, d_same_value)
         # Saves to text file
         self.__save_scores__(self.m_file_selector.zt_norm_file(model_id, group), zt_scores, probe_objects, self.m_file_selector.client_id(model_id))
   

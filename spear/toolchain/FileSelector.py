@@ -340,7 +340,7 @@ class FileSelector:
     # get the type of directory that is required
     used_dir = self.select_dir(dir_type)
    
-    files = self.sort(self.m_db.objects(groups=group, protocol=self.m_config.protocol, model_ids=(model_id,), purposes='enrol'))
+    files = self.sort(self.m_db.objects(groups=group, protocol=self.m_config.protocol, model_ids=(model_id,), purposes='enroll'))
     known = set()
     directory=used_dir
     extension=self.m_config.default_extension
@@ -352,7 +352,7 @@ class FileSelector:
     used_dir = self.select_dir(dir_type)
     model_file = os.path.join(self.m_config.models_dir, group, str(model_id) + self.m_config.default_extension) 
     utils.ensure_dir(os.path.dirname(model_file))
-    files = self.sort(self.m_db.objects(groups=group, protocol=self.m_config.protocol, model_ids=(model_id,), purposes='enrol'))
+    files = self.sort(self.m_db.objects(groups=group, protocol=self.m_config.protocol, model_ids=(model_id,), purposes='enroll'))
     known = set()
     directory=used_dir
     extension=self.m_config.default_extension

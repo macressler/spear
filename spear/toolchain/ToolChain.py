@@ -39,21 +39,21 @@ class ToolChain:
       self.m_tool.save_feature(data, str(filename))
     elif hasattr(data, 'save'):
       # this is some class that supports saving itself
-      data.save(bob.io.HDF5File(str(filename), "w"))
+      data.save(bob.io.base.HDF5File(str(filename), "w"))
     else:
-      # this is most probably a numpy.ndarray that can be saved by bob.io.save
-      bob.io.save(data, str(filename))
+      # this is most probably a numpy.ndarray that can be saved by bob.io.base.save
+      bob.io.base.save(data, str(filename))
   
   
   def __read_feature__(self, feature_file, tool = None):
-    """This function reads the feature from file. It uses the self.m_tool.read_feature() function, if available, otherwise it uses bob.io.load()"""
+    """This function reads the feature from file. It uses the self.m_tool.read_feature() function, if available, otherwise it uses bob.io.base.load()"""
     if not tool:
       tool = self.m_tool
     
     if hasattr(tool, 'read_feature'):
       return tool.read_feature(str(feature_file))
     else:
-      return bob.io.load(str(feature_file))
+      return bob.io.base.load(str(feature_file))
       
   def __save_scores__(self, score_file, scores, probe_objects, client_id):
     """Saves the scores into a text file."""
@@ -73,10 +73,10 @@ class ToolChain:
       tool.save_model(data, str(filename))
     elif hasattr(data, 'save'):
       # this is some class that supports saving itself
-      data.save(bob.io.HDF5File(str(filename), "w"))
+      data.save(bob.io.base.HDF5File(str(filename), "w"))
     else:
-      # this is most probably a numpy.ndarray that can be saved by bob.io.save
-      bob.io.save(data, str(filename))
+      # this is most probably a numpy.ndarray that can be saved by bob.io.base.save
+      bob.io.base.save(data, str(filename))
  
   def __check_file__(self, filename, force, expected_file_size = 1):
     """Checks if the file exists and has size greater or equal to expected_file_size.
@@ -251,7 +251,7 @@ class ToolChain:
         # perform training
         train_features = []
         for k in range(len(train_files)):
-          x = bob.io.load(str(train_files[k]))
+          x = bob.io.base.load(str(train_files[k]))
           if x.shape[0] > 0 and len(x.shape) ==2:
             train_features.append(x)
         tool.train_projector(train_features, str(projector_file))
@@ -279,13 +279,13 @@ class ToolChain:
         
         if not self.__check_file__(projected_ubm_file, force):
           # load feature
-          #feature = bob.io.load(str(feature_file))
+          #feature = bob.io.base.load(str(feature_file))
           feature = self.__read_feature__(feature_file, extractor)
           # project feature
           projected_ubm = tool.project_gmm(feature)
           # write it
           utils.ensure_dir(os.path.dirname(projected_ubm_file))
-          projected_ubm.save(bob.io.HDF5File(str(projected_ubm_file), "w"))
+          projected_ubm.save(bob.io.base.HDF5File(str(projected_ubm_file), "w"))
           
   
   #######################################################
@@ -318,7 +318,7 @@ class ToolChain:
     if hasattr(self.m_tool, 'read_probe'):
       return self.m_tool.read_probe(str(probe_file))
     else:
-      return bob.io.load(str(probe_file))
+      return bob.io.base.load(str(probe_file))
 
 
 
@@ -354,7 +354,7 @@ class ToolChain:
     # read all tmodel scores
     c_for_all = None
     for t_model_id in t_model_ids:
-      tmp = bob.io.load(self.m_file_selector.c_file(t_model_id, group))
+      tmp = bob.io.base.load(self.m_file_selector.c_file(t_model_id, group))
       if c_for_all == None:
         c_for_all = tmp
       else:
@@ -366,7 +366,7 @@ class ToolChain:
       probe_objects_for_model = self.m_file_selector.probe_objects_for_model(model_id, group)
       c_matrix_for_model = self.__c_matrix_split_for_model__(probe_objects_for_model, all_probe_objects, c_for_all)
       # Save C matrix to file
-      bob.io.save(c_matrix_for_model, self.m_file_selector.c_file_for_model(model_id, group))
+      bob.io.base.save(c_matrix_for_model, self.m_file_selector.c_file_for_model(model_id, group))
 
   # Function 15/
   def __scores_d_normalize__(self, tmodel_ids, group):
@@ -374,8 +374,8 @@ class ToolChain:
     d_for_all = None
     d_same_value = None
     for tmodel_id in tmodel_ids:
-      tmp = bob.io.load(self.m_file_selector.d_file(tmodel_id, group))
-      tmp2 = bob.io.load(self.m_file_selector.d_same_value_file(tmodel_id, group))
+      tmp = bob.io.base.load(self.m_file_selector.d_file(tmodel_id, group))
+      tmp2 = bob.io.base.load(self.m_file_selector.d_same_value_file(tmodel_id, group))
       if d_for_all == None and d_same_value == None:
         d_for_all = tmp
         d_same_value = tmp2
@@ -383,8 +383,8 @@ class ToolChain:
         d_for_all = numpy.vstack((d_for_all, tmp))
         d_same_value = numpy.vstack((d_same_value, tmp2))
     # Saves to files
-    bob.io.save(d_for_all, self.m_file_selector.d_matrix_file(group))
-    bob.io.save(d_same_value, self.m_file_selector.d_same_value_matrix_file(group))
+    bob.io.base.save(d_for_all, self.m_file_selector.d_matrix_file(group))
+    bob.io.base.save(d_same_value, self.m_file_selector.d_same_value_matrix_file(group))
 
 
   # Function 17/      

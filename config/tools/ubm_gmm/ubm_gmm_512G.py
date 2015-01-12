@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import spear
-import bob
+import bob.learn.misc
 
 tool = spear.tools.UBMGMMTool
 
@@ -24,5 +24,5 @@ relevance_factor = 4
 responsibilities_threshold = 0
 
 # Scoring
-scoring_function = bob.machine.linear_scoring
+scoring_function = bob.learn.misc.linear_scoring
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import spear
-import bob
+import bob.learn.misc
 tool = spear.tools.IVecTool
 
 # 2/ GMM Training
@@ -38,11 +38,11 @@ SUBSPACE_DIMENSION_OF_G = 200 # Size of subspace G
 variance_flooring = 1e-5
 
 INIT_SEED = 0 # seed for initializing
-INIT_F_METHOD = bob.trainer.PLDATrainer.BETWEEN_SCATTER
+INIT_F_METHOD = bob.learn.misc.PLDATrainer.BETWEEN_SCATTER
 INIT_F_RATIO = 1
-INIT_G_METHOD = bob.trainer.PLDATrainer.WITHIN_SCATTER
+INIT_G_METHOD = bob.learn.misc.PLDATrainer.WITHIN_SCATTER
 INIT_G_RATIO = 1
-INIT_S_METHOD = bob.trainer.PLDATrainer.VARIANCE_DATA
+INIT_S_METHOD = bob.learn.misc.PLDATrainer.VARIANCE_DATA
 INIT_S_RATIO = 1
 
 # 6/ LDA training

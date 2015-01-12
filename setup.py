@@ -22,7 +22,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='bob.spear',
-    version='1.1.8',
+    version='2.0.0',
     description='Speaker recognition toolkit',
     url='https://pypi.python.org/pypi/bob.spear',
     license='GPLv3',
@@ -53,17 +53,22 @@ setup(
         ],
       },
 
-    install_requires=[
+
+install_requires=[
         "setuptools", # for whatever
-        "gridtk >= 1.0.3",   # SGE job submission at Idiap
-        "bob == 1.2.2",      # base signal proc./machine learning library
-        "facereclib < 2.0.0",
-        # databases
-        "xbob.db.verification.filelist",
-        "xbob.db.voxforge",
-        "xbob.sox"
-        # "xbob.db.mobio",
-      ],
+        "bob.core",
+        "bob.io.base",
+        "bob.ap",
+        "bob.math",
+        "bob.measure",
+        "bob.learn.linear",
+        "bob.learn.misc",
+        "bob.db.verification.filelist",
+        "bob.db.voxforge",
+        "facereclib",
+        
+    ],
+
 
     classifiers = [
       'Development Status :: 4 - Beta',

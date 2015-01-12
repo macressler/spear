@@ -20,7 +20,7 @@
 """Energy-based voice activity detection for speaker recognition"""
 
 import numpy
-import bob
+import bob.ap
 import math
 from .. import utils
 import logging
@@ -47,15 +47,15 @@ class Energy:
     #normalize it
     normalized_energy = utils.normalize_std_array(energy_array)
     
-    kmeans = bob.machine.KMeansMachine(2, 1)
+    kmeans = bob.learn.misc.KMeansMachine(2, 1)
     
     logger_propagate = logger.propagate
     # Mute logger propagation
     if logger_propagate:
       logger.propagate = False    
-    m_ubm = bob.machine.GMMMachine(2, 1)
+    m_ubm = bob.learn.misc.GMMMachine(2, 1)
       
-    kmeans_trainer = bob.trainer.KMeansTrainer()
+    kmeans_trainer = bob.learn.misc.KMeansTrainer()
     kmeans_trainer.convergence_threshold = 0.0005
     kmeans_trainer.max_iterations = max_iterations
     kmeans_trainer.check_no_duplicate = True
@@ -76,7 +76,7 @@ class Energy:
     m_ubm.weights = weights
     m_ubm.set_variance_thresholds(0.0005)
     
-    trainer = bob.trainer.ML_GMMTrainer(True, True, True)
+    trainer = bob.learn.misc.ML_GMMTrainer(True, True, True)
     trainer.convergence_threshold = 0.0005
     trainer.max_iterations = 25
     trainer.train(m_ubm, normalized_energy)
@@ -139,5 +139,5 @@ class Energy:
     
     labels = self._compute_energy(input_file)
     
-    bob.io.save(labels, output_file)
+    bob.io.base.save(labels, output_file)
     

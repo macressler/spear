@@ -79,7 +79,7 @@ class Cepstral:
     if vad_file is None:
       labels=numpy.array(numpy.ones(cepstral_features.shape[0]), dtype=numpy.int16)
     else:
-      labels=bob.io.load(str(vad_file))
+      labels=bob.io.base.load(str(vad_file))
 
     features_mask = self.m_config.features_mask
     #if labels[-1] ==0:

@@ -2,7 +2,8 @@
 # vim: set fileencoding=utf-8 :
 # Manuel Guenther <Manuel.Guenther@idiap.ch>
 
-import bob
+import bob.io
+import bob.learn.misc
 import numpy
 
 from . import ISVTool
@@ -30,18 +31,18 @@ class JFATool (ISVTool):
   
   def train_enroler(self, train_files, enroler_file):
     # create a JFABasemachine with the UBM from the base class
-    self.m_jfabase = bob.machine.JFABase(self.m_ubm, self.m_subspace_dimension_of_u, self.m_subspace_dimension_of_v)
+    self.m_jfabase = bob.learn.misc.JFABase(self.m_ubm, self.m_subspace_dimension_of_u, self.m_subspace_dimension_of_v)
 
     # load GMM stats from training files
     gmm_stats = self.__load_gmm_stats_list__(train_files)
 
     # train the JFA
-    t = bob.trainer.JFATrainer(self.m_jfa_training_iterations)
+    t = bob.learn.misc.JFATrainer(self.m_jfa_training_iterations)
     t.rng = bob.core.random.mt19937(self.m_init_seed)
     t.train(self.m_jfabase, gmm_stats)
 
     # Save the JFA base AND the UBM into the same file
-    self.m_jfabase.save(bob.io.HDF5File(enroler_file, "w"))
+    self.m_jfabase.save(bob.io.base.HDF5File(enroler_file, "w"))
 
 
 
@@ -50,18 +51,18 @@ class JFATool (ISVTool):
   def load_enroler(self, enroller_file):
     """Reads the UBM model from file"""
     # now, load the JFA base, if it is included in the file
-    self.m_jfabase = bob.machine.JFABase(bob.io.HDF5File(enroller_file))
+    self.m_jfabase = bob.learn.misc.JFABase(bob.io.base.HDF5File(enroller_file))
     # add UBM model from base class
     self.m_jfabase.ubm = self.m_ubm
 
-    self.m_machine = bob.machine.JFAMachine(self.m_jfabase)
-    self.m_trainer = bob.trainer.JFATrainer()
+    self.m_machine = bob.learn.misc.JFAMachine(self.m_jfabase)
+    self.m_trainer = bob.learn.misc.JFATrainer()
     self.m_trainer.rng = bob.core.random.mt19937(self.m_init_seed)
 
 
   def read_feature(self, feature_file):
     """Reads the projected feature to be enrolled as a model"""
-    return bob.machine.GMMStats(bob.io.HDF5File(str(feature_file)))
+    return bob.learn.misc.GMMStats(bob.io.base.HDF5File(str(feature_file)))
 
 
   def enroll(self, enroll_features):
@@ -76,7 +77,7 @@ class JFATool (ISVTool):
   ################ Feature comparison ##################
   def read_model(self, model_file):
     """Reads the JFA Machine that holds the model"""
-    machine = bob.machine.JFAMachine(bob.io.HDF5File(model_file))
+    machine = bob.learn.misc.JFAMachine(bob.io.base.HDF5File(model_file))
     machine.jfa_base = self.m_jfabase
     return machine
 

@@ -6,15 +6,15 @@
 training_queue = { 'queue':'q1d', 'memfree':'8G'}
 
 # number of audio files that one job should preprocess
-number_of_audio_files_per_job = 1000
+number_of_audio_files_per_job = 100
 preprocessing_queue = {'queue':'q1d', 'memfree':'1G'}
 
 # number of features that one job should extract
-number_of_features_per_job = 1000
+number_of_features_per_job = 100
 extraction_queue = {'queue':'q1d', 'memfree':'1G'}
 
 # number of features that one job should project
-number_of_projections_per_job = 400
+number_of_projections_per_job = 40
 projection_queue = {'queue':'q1d', 'memfree':'1G'}
 
 # number of models that should be enroled by one enrol job

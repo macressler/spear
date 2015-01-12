@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-import bob
+import bob.io
 import facereclib.tools.UBMGMM as UBMGMM
 
 class UBMGMMRegularTool (UBMGMM):
@@ -48,7 +48,7 @@ class UBMGMMRegularTool (UBMGMM):
     self.use_unprojected_features_for_model_enrol = True
  
   def read_probe(self, probe_file):
-    return bob.io.load(probe_file)
+    return bob.io.base.load(probe_file)
   
   def score(self, model, probe):
     """Computes the score for the given model and the given probe.

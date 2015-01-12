@@ -119,7 +119,7 @@ class ToolChainJFA(ToolChain):
     if hasattr(self.m_tool, 'read_model'):
       return self.m_tool.read_model(str(model_file))
     else:
-      return bob.io.load(str(model_file))
+      return bob.io.base.load(str(model_file))
     
 
   def __scores__(self, model, probe_files):
@@ -194,7 +194,7 @@ class ToolChainJFA(ToolChain):
   
         #if compute_zt_norm:
           # write A matrix only when you want to compute zt norm afterwards
-        bob.io.save(a, self.m_file_selector.a_file(model_id, group))
+        bob.io.base.save(a, self.m_file_selector.a_file(model_id, group))
   
         # Saves to text file
         self.__save_scores__(self.m_file_selector.no_norm_file(model_id, group), a, probe_objects, self.m_file_selector.client_id(model_id))
@@ -226,7 +226,7 @@ class ToolChainJFA(ToolChain):
           b = self.__scores_preloaded__(model, zprobes)
         else:
           b = self.__scores__(model, zprobe_objects)
-        bob.io.save(b, score_file)
+        bob.io.base.save(b, score_file)
 
   def __scores_c__(self, tmodel_ids, group, force, preload_probes):
     """Computed C scores"""
@@ -255,7 +255,7 @@ class ToolChainJFA(ToolChain):
           c = self.__scores_preloaded__(tmodel, probes)
         else:
           c = self.__scores__(tmodel, probe_files)
-        bob.io.save(c, score_file)
+        bob.io.base.save(c, score_file)
       
   def __scores_d__(self, tmodel_ids, group, force, preload_probes):
     # probe files:
@@ -289,11 +289,11 @@ class ToolChainJFA(ToolChain):
           d = self.__scores_preloaded__(tmodel, zprobes)
         else:
           d = self.__scores__(tmodel, zprobe_files)
-        bob.io.save(d, self.m_file_selector.d_file(tmodel_id, group))
+        bob.io.base.save(d, self.m_file_selector.d_file(tmodel_id, group))
   
         tclient_id = [self.m_file_selector.m_config.db.get_client_id_from_tmodel_id(tmodel_id)]
-        d_same_value_tm = bob.machine.ztnorm_same_value(tclient_id, zprobe_ids)
-        bob.io.save(d_same_value_tm, score_file)
+        d_same_value_tm = bob.learn.misc.ztnorm_same_value(tclient_id, zprobe_ids)
+        bob.io.base.save(d_same_value_tm, score_file)
 
 
   def compute_scores(self, tool, compute_zt_norm, force = False, indices = None, groups = ['dev', 'eval'], types = ['A', 'B', 'C', 'D'], preload_probes = False):
@@ -371,20 +371,20 @@ class ToolChainJFA(ToolChain):
 
 
       # load D matrices only once
-      d = bob.io.load(self.m_file_selector.d_matrix_file(group))
-      d_same_value = bob.io.load(self.m_file_selector.d_same_value_matrix_file(group)).astype(bool)
+      d = bob.io.base.load(self.m_file_selector.d_matrix_file(group))
+      d_same_value = bob.io.base.load(self.m_file_selector.d_same_value_matrix_file(group)).astype(bool)
       # Loops over the model ids
       for model_id in model_ids:
         # Loads probe objects to get information about the type of access
         probe_objects = self.m_file_selector.probe_objects_for_model(model_id, group)
 
         # Loads A, B, C, D and D_same_value matrices
-        a = bob.io.load(self.m_file_selector.a_file(model_id, group))
-        b = bob.io.load(self.m_file_selector.b_file(model_id, group))
-        c = bob.io.load(self.m_file_selector.c_file_for_model(model_id, group))
+        a = bob.io.base.load(self.m_file_selector.a_file(model_id, group))
+        b = bob.io.base.load(self.m_file_selector.b_file(model_id, group))
+        c = bob.io.base.load(self.m_file_selector.c_file_for_model(model_id, group))
         
         # compute zt scores
-        zt_scores = bob.machine.ztnorm(a, b, c, d, d_same_value)
+        zt_scores = bob.learn.misc.ztnorm(a, b, c, d, d_same_value)
 
         # Saves to text file
         self.__save_scores__(self.m_file_selector.zt_norm_file(model_id, group), zt_scores, probe_objects, self.m_file_selector.client_id(model_id))
