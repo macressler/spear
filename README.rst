@@ -61,8 +61,8 @@ https://github.com/idiap/bob/wiki/Packages
    
 Then, just download this package and decompress it locally::
 
-  $ wget https://pypi.python.org/packages/source/b/bob.spear/bob.spear-1.1.2.zip
-  $ unzip bob.spear-1.1.2.zip
+  $ wget https://pypi.python.org/packages/source/b/bob.spear/bob.spear-2.0.0.zip
+  $ unzip bob.spear-2.0.0.zip
   $ cd spear
 
 `spear`_ is based on the `BuildOut`_ python linking system. You only need to use buildout to bootstrap and have a working environment ready for
@@ -71,7 +71,7 @@ experiments::
   $ python bootstrap
   $ ./bin/buildout
 
-This also requires that bob (>= 1.2.0) is installed.
+This also requires that bob (>= 2.0) is installed.
 
 
 II- Running experiments
