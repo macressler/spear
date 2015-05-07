@@ -47,21 +47,20 @@ class Energy:
     #normalize it
     normalized_energy = utils.normalize_std_array(energy_array)
     
-    kmeans = bob.learn.misc.KMeansMachine(2, 1)
+    kmeans = bob.learn.em.KMeansMachine(2, 1)
     
     logger_propagate = logger.propagate
     # Mute logger propagation
     if logger_propagate:
       logger.propagate = False    
-    m_ubm = bob.learn.misc.GMMMachine(2, 1)
+    m_ubm = bob.learn.em.GMMMachine(2, 1)
       
-    kmeans_trainer = bob.learn.misc.KMeansTrainer()
-    kmeans_trainer.convergence_threshold = 0.0005
-    kmeans_trainer.max_iterations = max_iterations
-    kmeans_trainer.check_no_duplicate = True
+    kmeans_trainer = bob.learn.em.KMeansTrainer()
+    #kmeans_trainer.check_no_duplicate = True
   
     # Trains using the KMeansTrainer
-    kmeans_trainer.train(kmeans, normalized_energy)
+    #kmeans_trainer.train(kmeans, normalized_energy)
+    bob.learn.em.train(kmeans_trainer, kmeans, normalized_energy, max_iterations, 0.0005)
     
     [variances, weights] = kmeans.get_variances_and_weights_for_each_cluster(normalized_energy)
     means = kmeans.means
@@ -76,10 +75,8 @@ class Energy:
     m_ubm.weights = weights
     m_ubm.set_variance_thresholds(0.0005)
     
-    trainer = bob.learn.misc.ML_GMMTrainer(True, True, True)
-    trainer.convergence_threshold = 0.0005
-    trainer.max_iterations = 25
-    trainer.train(m_ubm, normalized_energy)
+    trainer = bob.learn.em.ML_GMMTrainer(True, True, True)
+    bob.learn.em.train(trainer, m_ubm, normalized_energy, 25, 0.0005)
     means = m_ubm.means
     weights = m_ubm.weights
     
@@ -96,8 +93,8 @@ class Energy:
     
     label = numpy.array(numpy.ones(n_samples), dtype=numpy.int16)
     
-    higher_mean_gauss = m_ubm.update_gaussian(higher)
-    lower_mean_gauss = m_ubm.update_gaussian(lower)
+    higher_mean_gauss = m_ubm.get_gaussian(higher)
+    lower_mean_gauss = m_ubm.get_gaussian(lower)
     
 
     k=0

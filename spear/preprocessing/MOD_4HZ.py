@@ -175,5 +175,4 @@ class MOD_4HZ:
     """labels speech (1) and non-speech (0) parts for the given input wave file using 4Hz modulation energy and energy"""
     
     [labels, energy_array, mod_4hz] = self.mod_4hz(input_file)
-    bob.io.save(labels, output_file)
-    
+    bob.io.base.save(labels, output_file)

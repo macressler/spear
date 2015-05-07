@@ -58,7 +58,7 @@ class ToolChainIvector(ToolChain):
           #feature = bob.io.base.load(str(feature_file))
           feature = self.__read_feature__(feature_file, extractor)
           # load projected_ubm file
-          projected_ubm = bob.learn.misc.GMMStats(bob.io.base.HDF5File(str(projected_ubm_file)))
+          projected_ubm = bob.learn.em.GMMStats(bob.io.base.HDF5File(str(projected_ubm_file)))
           # project ivector feature
           projected_ivector = tool.project_ivector(feature, projected_ubm)
           # write it
@@ -511,7 +511,7 @@ class ToolChainIvector(ToolChain):
             d = self.__scores__(tmodel, zprobe_files)
         bob.io.base.save(d, self.m_file_selector.d_file(tmodel_id, group))
         tclient_id = [self.m_file_selector.m_config.db.get_client_id_from_model_id(tmodel_id)]
-        d_same_value_tm = bob.learn.misc.ztnorm_same_value(tclient_id, zprobe_ids)
+        d_same_value_tm = bob.learn.em.ztnorm_same_value(tclient_id, zprobe_ids)
         bob.io.base.save(d_same_value_tm, score_file)
 
   # Function 12/
@@ -595,7 +595,7 @@ class ToolChainIvector(ToolChain):
         b = bob.io.base.load(self.m_file_selector.b_file(model_id, group))
         c = bob.io.base.load(self.m_file_selector.c_file_for_model(model_id, group))
         # compute zt scores
-        zt_scores = bob.learn.misc.ztnorm(a, b, c, d, d_same_value)
+        zt_scores = bob.learn.em.ztnorm(a, b, c, d, d_same_value)
         # Saves to text file
         self.__save_scores__(self.m_file_selector.zt_norm_file(model_id, group), zt_scores, probe_objects, self.m_file_selector.client_id(model_id))
   

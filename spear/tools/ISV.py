@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-import bob.learn.misc
+import bob.learn.em
 import bob.io.base
 import numpy
 from . import UBMGMMTool
@@ -45,7 +45,7 @@ class ISVTool (UBMGMMTool):
     gmm_stats = [] 
     for k in l_files: 
       # Processes one file 
-      stats = bob.learn.misc.GMMStats( bob.io.base.HDF5File(str(k)) ) 
+      stats = bob.learn.em.GMMStats( bob.io.base.HDF5File(str(k)) ) 
       # Appends in the list 
       gmm_stats.append(stats)
     return gmm_stats
@@ -69,14 +69,14 @@ class ISVTool (UBMGMMTool):
   ################ ISV training #########################
   def train_enroler(self, train_files, enroler_file):
     # create a ISVBase with the UBM from the base class
-    self.m_isvbase =  bob.learn.misc.ISVBase(self.m_ubm, self.m_config.ru)
+    self.m_isvbase =  bob.learn.em.ISVBase(self.m_ubm, self.m_config.ru)
     self.m_isvbase.ubm = self.m_ubm
 
     # load GMM stats from training files
     gmm_stats = self.__load_gmm_stats_list__(train_files)
 
-    t = bob.learn.misc.ISVTrainer(self.m_config.n_iter_train, self.m_config.relevance_factor)
-    t.train(self.m_isvbase, gmm_stats)
+    trainer = bob.learn.em.ISVTrainer(self.m_config.relevance_factor)
+    bob.learn.em.train(trainer, self.m_isvbase, gmm_stats, self.m_config.n_iter_train)
 
     # Save the ISV base AND the UBM into the same file
     self.m_isvbase.save(bob.io.base.HDF5File(enroler_file, "w"))
@@ -88,19 +88,18 @@ class ISVTool (UBMGMMTool):
   def load_enroler(self, enroler_file):
     """Reads the UBM model from file"""
     # now, load the ISV base, if it is included in the file
-    self.m_isvbase = bob.learn.misc.ISVBase(bob.io.base.HDF5File(enroler_file))
+    self.m_isvbase = bob.learn.em.ISVBase(bob.io.base.HDF5File(enroler_file))
     # add UBM model from base class
     self.m_isvbase.ubm = self.m_ubm
 
-    self.m_machine = bob.learn.misc.ISVMachine(self.m_isvbase)
-    self.m_trainer = bob.learn.misc.ISVTrainer(self.m_config.n_iter_train, self.m_config.relevance_factor)
+    self.m_machine = bob.learn.em.ISVMachine(self.m_isvbase)
+    self.m_trainer = bob.learn.em.ISVTrainer(self.m_config.relevance_factor)
     
     
   def project_isv(self, feature_array, projected_ubm):
     #""Computes GMM statistics against a UBM, given an input 2D numpy.ndarray of feature vectors""
-    projected_isv = numpy.ndarray(shape=(self.m_ubm.dim_c*self.m_ubm.dim_d,), dtype=numpy.float64)
-    
-    model = bob.learn.misc.ISVMachine(self.m_isvbase)
+    projected_isv = numpy.ndarray(shape=(self.m_ubm.shape[0]*self.m_ubm.shape[1],), dtype=numpy.float64)
+    model = bob.learn.em.ISVMachine(self.m_isvbase)
     model.estimate_ux(projected_ubm, projected_isv)
     #
     return [projected_ubm, projected_isv]
@@ -117,12 +116,12 @@ class ISVTool (UBMGMMTool):
 
   def read_feature(self, feature_file):
     """Reads the projected feature to be enroled as a model"""
-    return bob.learn.misc.GMMStats(bob.io.base.HDF5File(str(feature_file))) 
+    return bob.learn.em.GMMStats(bob.io.base.HDF5File(str(feature_file))) 
     
   
   def enroll(self, enrol_features):
     """Performs ISV enrolment"""
-    self.m_trainer.enrol(self.m_machine, enrol_features, self.m_config.n_iter_enrol)
+    self.m_trainer.enroll(self.m_machine, enrol_features, self.m_config.n_iter_enrol)
     # return the resulting gmm    
     return self.m_machine
 
@@ -132,7 +131,7 @@ class ISVTool (UBMGMMTool):
   def read_model(self, model_file):
     """Reads the ISV Machine that holds the model"""
     print("model: %s" %model_file)
-    machine = bob.learn.misc.ISVMachine(bob.io.base.HDF5File(model_file))
+    machine = bob.learn.em.ISVMachine(bob.io.base.HDF5File(model_file))
     machine.isv_base = self.m_isvbase
     return machine
 
@@ -140,11 +139,11 @@ class ISVTool (UBMGMMTool):
     """Read the type of features that we require, namely GMMStats"""
     hdf5file = bob.io.base.HDF5File(probe_file)
     hdf5file.cd('gmmstats')
-    gmmstats = bob.learn.misc.GMMStats(hdf5file)
+    gmmstats = bob.learn.em.GMMStats(hdf5file)
     hdf5file.cd('/')
     Ux = hdf5file.read('Ux')
     return [gmmstats, Ux]
-    #return bob.learn.misc.GMMStats(bob.io.base.HDF5File(probe_file))
+    #return bob.learn.em.GMMStats(bob.io.base.HDF5File(probe_file))
 
   def score(self, model, probe):
     """Computes the score for the given model and the given probe using the scoring function from the config file"""

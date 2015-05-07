@@ -19,7 +19,7 @@
 #
 
 import bob.io
-import bob.learn.misc
+import bob.learn.em
 import numpy
 from . import UBMGMMTool
 from itertools import izip
@@ -59,7 +59,7 @@ class IVecTool (UBMGMMTool):
     for k in sorted(ld_files.keys()): 
       for f in ld_files[k]: 
         # Processes one file 
-        stats = bob.learn.misc.GMMStats( bob.io.base.HDF5File(str(f)) ) 
+        stats = bob.learn.em.GMMStats( bob.io.base.HDF5File(str(f)) ) 
         # Appends in the list 
         gmm_stats.append(stats)
     return gmm_stats
@@ -73,22 +73,16 @@ class IVecTool (UBMGMMTool):
     gmm_stats = self.__load_gmm_stats_list__(train_files)
     
     # create a IVectorMachine with the UBM from the base class
-    self.m_ivector = bob.learn.misc.IVectorMachine(self.m_ubm, self.m_config.rt) #This is the dimension of the T matrix. It is tipically equal to 400. 
+    self.m_ivector = bob.learn.em.IVectorMachine(self.m_ubm, self.m_config.rt) #This is the dimension of the T matrix. It is tipically equal to 400. 
     self.m_ivector.variance_threshold = 1e-5 
     
-    t = numpy.random.randn(self.m_ubm.dim_c * self.m_ubm.dim_d, self.m_config.rt)
+    t = numpy.random.randn(self.m_ubm.shape[0]*self.m_ubm.shape[1], self.m_config.rt)
     sigma = self.m_ubm.variance_supervector
     self.m_ivector.t = t 
     self.m_ivector.sigma = sigma
-
-    # Initialization of the IVectorTrainer
-    trainer = bob.learn.misc.IVectorTrainer(update_sigma=True, convergence_threshold= self.m_config.convergence_threshold, max_iterations=self.m_config.max_iterations)
-    trainer.initialize(self.m_ivector, gmm_stats)
-
-    # E-Step
-    trainer.train(self.m_ivector, gmm_stats)
-    # M-Step
-    #trainer.m_step(self.m_ivector, gmm_stats)
+    
+    trainer = bob.learn.em.IVectorTrainer(update_sigma=True)
+    bob.learn.em.train(trainer, self.m_ivector, gmm_stats, max_iterations = self.m_config.max_iterations, initialize=True, rng=bob.core.random.mt19937(self.m_init_seed))
 
     # Save the i-vector machine base AND the UBM into the same file
     self.m_ivector.save(bob.io.base.HDF5File(enroler_file, "w"))
@@ -133,7 +127,7 @@ class IVecTool (UBMGMMTool):
     data = numpy.vstack(data_list)
 
     print("  -> Training LinearMachine using PCA (SVD)")
-    t = bob.learn.misc.SVDPCATrainer()
+    t = bob.learn.em.SVDPCATrainer()
     machine, __eig_vals = t.train(data)
     # limit number of pcs
     machine.resize(machine.shape[0], self.m_config.subspace_dimension_pca)
@@ -175,20 +169,18 @@ class IVecTool (UBMGMMTool):
 
     print("  -> Training PLDA base machine")
     # create trainer
-    t = bob.learn.misc.PLDATrainer(self.m_config.PLDA_TRAINING_ITERATIONS)
-    
-    t.seed = self.m_config.INIT_SEED
+    t = bob.learn.em.PLDATrainer()
     
     t.init_f_method = self.m_config.INIT_F_METHOD
-    t.init_f_ratio = self.m_config.INIT_F_RATIO
+    #t.init_f_ratio = self.m_config.INIT_F_RATIO
     t.init_g_method = self.m_config.INIT_G_METHOD
-    t.init_g_ratio = self.m_config.INIT_G_RATIO
+    #t.init_g_ratio = self.m_config.INIT_G_RATIO
     t.init_sigma_method = self.m_config.INIT_S_METHOD
-    t.init_sigma_ratio = self.m_config.INIT_S_RATIO
+    #t.init_sigma_ratio = self.m_config.INIT_S_RATIO
 
     # train machine
-    self.m_plda_base = bob.learn.misc.PLDABase(input_dimension, self.m_config.SUBSPACE_DIMENSION_OF_F, self.m_config.SUBSPACE_DIMENSION_OF_G, self.m_config.variance_flooring)
-    t.train(self.m_plda_base, training_features)
+    self.m_plda_base = bob.learn.em.PLDABase(input_dimension, self.m_config.SUBSPACE_DIMENSION_OF_F, self.m_config.SUBSPACE_DIMENSION_OF_G, self.m_config.variance_flooring)
+    bob.learn.em.train(t, self.m_plda_base, training_features, self.m_config.PLDA_TRAINING_ITERATIONS, rng=bob.core.random.mt19937(self.m_config.INIT_SEED))
 
     # write machines to file
     proj_hdf5file = bob.io.base.HDF5File(str(plda_enroler_file), "w")
@@ -205,18 +197,18 @@ class IVecTool (UBMGMMTool):
   ################## IVector model enrol ####################
   def load_projector(self, projector_file):
     """Reads the UBM model from file"""
-    self.m_ubm = bob.learn.misc.GMMMachine(bob.io.base.HDF5File(projector_file))
+    self.m_ubm = bob.learn.em.GMMMachine(bob.io.base.HDF5File(projector_file))
     # Initializes GMMStats object
-    self.m_gmm_stats = bob.learn.misc.GMMStats(self.m_ubm.dim_c, self.m_ubm.dim_d)
+    self.m_gmm_stats = bob.learn.em.GMMStats(self.m_ubm.shape[0], self.m_ubm.shape[1])
 
   #######################################################
   ################## IVector model enrol ####################
   def load_enroler(self, enroler_file, projector_file):
     """Reads the Enroler model from file"""
     # now, load the IVector machine
-    self.m_ivector = bob.learn.misc.IVectorMachine(bob.io.base.HDF5File(enroler_file))
+    self.m_ivector = bob.learn.em.IVectorMachine(bob.io.base.HDF5File(enroler_file))
     # add TV model from base class
-    self.m_ivector.ubm = bob.learn.misc.GMMMachine(bob.io.base.HDF5File(projector_file))
+    self.m_ivector.ubm = bob.learn.em.GMMMachine(bob.io.base.HDF5File(projector_file))
 
   #######################################################
   ############## Whitening model enrol ##################
@@ -238,32 +230,32 @@ class IVecTool (UBMGMMTool):
       proj_hdf5file.cd('/pca')
       self.m_pca_machine = bob.learn.linear.Machine(proj_hdf5file)
     proj_hdf5file.cd('/plda')
-    self.m_plda_base = bob.learn.misc.PLDABase(proj_hdf5file)
-    self.m_plda_machine = bob.learn.misc.PLDAMachine(self.m_plda_base)
-    self.m_plda_trainer = bob.learn.misc.PLDATrainer()
+    self.m_plda_base = bob.learn.em.PLDABase(proj_hdf5file)
+    self.m_plda_machine = bob.learn.em.PLDAMachine(self.m_plda_base)
+    self.m_plda_trainer = bob.learn.em.PLDATrainer()
     
   def plda_enrol(self, enroll_features):
     """Enrolls the model by computing an average of the given input vectors"""
     enroll_features = numpy.vstack(enroll_features)
     if self.m_config.subspace_dimension_pca is not None:
       enroll_features_projected = self.__perform_pca_client__(self.m_pca_machine, enroll_features)
-      self.m_plda_trainer.enrol(self.m_plda_machine,enroll_features_projected)
+      self.m_plda_trainer.enroll(self.m_plda_machine,enroll_features_projected)
     else:
-      self.m_plda_trainer.enrol(self.m_plda_machine,enroll_features)
+      self.m_plda_trainer.enroll(self.m_plda_machine,enroll_features)
     return self.m_plda_machine
  
   def read_plda_model(self, model_file):
     """Reads the model, which in this case is a PLDA-Machine"""
     # read machine and attach base machine
     print ("model: %s" %model_file)
-    plda_machine = bob.learn.misc.PLDAMachine(bob.io.base.HDF5File(str(model_file)), self.m_plda_base)
+    plda_machine = bob.learn.em.PLDAMachine(bob.io.base.HDF5File(str(model_file)), self.m_plda_base)
     return plda_machine
   
   def plda_score(self, model, probe):
-    return model.forward(probe)
+    return model.log_likelihood_ratio(probe)
     
   def project_ivector(self, feature_array, projected_ubm):
-    projected_ivector = self.m_ivector.forward(projected_ubm)
+    projected_ivector = self.m_ivector.project(projected_ubm)
     return projected_ivector
   
   def save_feature(self, data, feature_file):
@@ -272,7 +264,7 @@ class IVecTool (UBMGMMTool):
 
   def read_feature(self, feature_file):
     """Reads the projected feature to be enroled as a model"""
-    return bob.learn.misc.GMMStats(bob.io.base.HDF5File(str(feature_file))) 
+    return bob.learn.em.GMMStats(bob.io.base.HDF5File(str(feature_file))) 
     
   def read_ivector(self, ivector_file):
     """Reads the ivectors that correspond to the model, and put them in a list"""
@@ -358,7 +350,7 @@ class IVecTool (UBMGMMTool):
     # Initializes an array for the data
     data = self.lda_read_data(training_files)
     print("  -> Training LinearMachine using LDA")
-    #t = bob.learn.misc.FisherLDATrainer()
+    #t = bob.learn.em.FisherLDATrainer()
     # In case of trouble, use the pseudo-inverse computation flag to true
     #t = bob.learn.linear.FisherLDATrainer(use_pinv=True)
     t = bob.learn.linear.FisherLDATrainer(strip_to_rank=False)

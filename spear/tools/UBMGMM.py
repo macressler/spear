@@ -20,11 +20,11 @@
 
 import bob
 import numpy
-#import logging
+import logging
 import facereclib.tools.UBMGMM as UBMGMM
 
-#logger = logging.getLogger("bob.c++")
-#logger.setLevel(logging.INFO)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class UBMGMMTool(UBMGMM):
   """This class is mainly based on facereclib.tools.UBMGMM"""
@@ -40,8 +40,9 @@ class UBMGMMTool(UBMGMM):
     
     self.m_normalize_before_k_means = self.m_config.norm_KMeans
     #self.m_gaussians = self.m_config.n_gaussians
+    self.m_k_means_training_iterations = self.m_config.iterk
+    self.m_gmm_training_iterations = self.m_config.iterg_train
     self.m_training_threshold = self.m_config.convergence_threshold
-    self.m_gmm_training_iterations = self.m_config.iterk
     self.m_variance_threshold = self.m_config.variance_threshold
     self.m_update_means = self.m_config.update_means
     self.m_update_variances = self.m_config.update_variances
