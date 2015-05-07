@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
 import spear
-import bob.learn.misc
+import bob.learn.em
 tool = spear.tools.IVecTool
 
 # 2/ GMM Training
 n_gaussians = 256
 iterk = 25
 iterg_train = 25
+convergence_threshold = 0.0001
 end_acc = 0.0001
 var_thd = 0.0001
 update_weights = True
@@ -23,7 +24,6 @@ n_iter_enrol = 1
 
 # 4/ JFA Enrolment and scoring
 iterg_enrol = 1
-convergence_threshold = 0.0001
 variance_threshold = 0.0001
 relevance_factor = 4
 responsibilities_threshold = 0
@@ -38,11 +38,11 @@ SUBSPACE_DIMENSION_OF_F = 5 # Size of subspace F
 SUBSPACE_DIMENSION_OF_G = 10 # Size of subspace G
 variance_flooring = 1e-5
 INIT_SEED = 0 # seed for initializing
-INIT_F_METHOD = bob.learn.misc.PLDATrainer.BETWEEN_SCATTER
+INIT_F_METHOD = 'BETWEEN_SCATTER'
 INIT_F_RATIO = 1
-INIT_G_METHOD = bob.learn.misc.PLDATrainer.WITHIN_SCATTER
+INIT_G_METHOD = 'WITHIN_SCATTER'
 INIT_G_RATIO = 1
-INIT_S_METHOD = bob.learn.misc.PLDATrainer.VARIANCE_DATA
+INIT_S_METHOD = 'VARIANCE_DATA'
 INIT_S_RATIO = 1
 
 # 6/ LDA training
