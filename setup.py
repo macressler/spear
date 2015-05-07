@@ -62,7 +62,7 @@ install_requires=[
         "bob.math",
         "bob.measure",
         "bob.learn.linear",
-        "bob.learn.misc",
+        "bob.learn.em",
         "bob.db.verification.filelist",
         "bob.db.voxforge",
         "facereclib",
