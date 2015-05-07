@@ -272,8 +272,8 @@ In this example, we used the following configuration:
 
 The performance of the system on DEV and EVAL are:
 
-* ``DEV: EER = 2.00%``
-* ``EVAL: HTER = 1.65%``
+* ``DEV: EER = 2.04%``
+* ``EVAL: HTER = 1.85%``
 
 If you want to run the same experiment on SGE::
 
@@ -305,8 +305,8 @@ Another example is to use **ISV** toolchain instead of UBM-GMM::
    -f config/features/mfcc_60.py -t config/tools/isv/isv_256g_u50.py  -z -b isv \ 
    --user-directory PATH/TO/USER/DIR --temp-directory PATH/TO/TEMP/DIR  
 
-* ``DEV: EER = 1.41%``
-* ``EVAL: HTER = 1.56%``
+* ``DEV: EER = 1.67%``
+* ``EVAL: HTER = 1.28%``
 
 One can also try **JFA** toolchain::
 
@@ -314,8 +314,8 @@ One can also try **JFA** toolchain::
    -f config/features/mfcc_60.py -t config/tools/jfa/jfa_256_v5_u10.py  -z -b jfa \ 
    --user-directory PATH/TO/USER/DIR --temp-directory PATH/TO/TEMP/DIR
    
-* ``DEV: EER = 5.65%``
-* ``EVAL: HTER = 4.82%``   
+* ``DEV: EER = 4.33%``
+* ``EVAL: HTER = 5.89%``   
   
 or also **IVector** toolchain where **Whitening, L-Norm, LDA, WCCN** are used like in this example where the score computation is done using **Cosine distance**::
 
