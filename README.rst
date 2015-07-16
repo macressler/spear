@@ -2,8 +2,9 @@ BOB SPEAR: A Speaker Recognition Toolkit based on Bob
 =====================================================
 
 SPEAR is a speaker recognition toolkit based on Bob, designed to run speaker verification/recognition
-experiments . It's originally based on facereclib tool:
-https://pypi.python.org/pypi/facereclib
+experiments. This is an old version that is not supported anymore. The new release of the package using `bob.bio.base` package can be found here:
+
+https://github.com/bioidiap/bob.bio.spear/
 
 `SPEAR`_ is designed in a way that it should be easily possible to execute experiments combining different mixtures of:
 
