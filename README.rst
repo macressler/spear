@@ -5,7 +5,7 @@ SPEAR is a speaker recognition toolkit based on Bob, designed to run speaker ver
 experiments. This is an old version that is not supported anymore. 
 
 .. note::
-The new release of the package using `bob.bio.base`_ package can be found here:
+  The new release of the package using `bob.bio.base`_ package can be found here:
 
 https://github.com/bioidiap/bob.bio.spear/
 
