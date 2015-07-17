@@ -22,7 +22,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='bob.spear',
-    version='2.0.0',
+    version='1.9.0',
     description='Speaker recognition toolkit',
     url='https://pypi.python.org/pypi/bob.spear',
     license='GPLv3',
